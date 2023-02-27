@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 class Map {
     private List<Waypoint> waypoints;
@@ -17,6 +16,14 @@ class Map {
     public void addStreetSegment(StreetSegment streetSegment) {
         streetSegments.add(streetSegment);
     }
+
+    public void displayWaypoints() {
+        System.out.println("ALL WAYPOINTS:");
+        System.out.println("[ID]   [X]      [Y]");
+        for (Waypoint waypoint : waypoints) {
+            System.out.println(waypoint.getId() + "      " + waypoint.getX() + "      "+ waypoint.getY());
+        }
+    }
     
     public List<Waypoint> getWaypoints() {
         return waypoints;
@@ -26,13 +33,21 @@ class Map {
         return streetSegments;
     }
 
-    //This is probably not accurate to the formula however it is a placeholder.
-    /*
-    This algorithm takes two waypoints as input and returns the possiblity degree of a route between them.
-    It initializes the possibility degree to 1 it retrieves the probability values and constraints (p1, p2, c1, c2, c3, and c4) and updates the possibility degree using the given formula. 
-    It uses the Math.min function to perform the logical 'and' operation, and the 1 - function to perform the logical negation.
-    */
-    public double computePossibilityDegree(Waypoint start, Waypoint end) {
+
+    public Waypoint findWaypointById(int id) {
+        for (Waypoint waypoint : waypoints) {
+            if (waypoint.getId() == id) {
+                return waypoint;
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+    public double computePossibilityDegree(StreetSegment segment) {
         // Initialize possibility degree to 1
         double possibilityDegree = 1;
         // Get the probability values and constraints for the current segment
@@ -51,12 +66,19 @@ class Map {
         return possibilityDegree;
     }
 
+
+
+
+
+
+
     /*
     The algorithm uses a priority queue and a couple of HashMaps to keep track of the possibility degree and the previous waypoint of each waypoint in the optimal route. It starts by adding the starting waypoint to the priority queue with a possibility degree of 1.
     It then enters a while loop that continues until the priority queue is empty. In each iteration, it takes the waypoint with the highest possibility degree from the queue, and checks if it is the end waypoint. If it is, it uses the previous waypoints map to trace the optimal route from the end waypoint to the starting waypoint and return it.
     If the current waypoint is not the end waypoint, it loops through each street segment that leaves from it, and for each one of them, it calculates the possibility degree of the neighbor waypoint, and compares it with the one already stored in the possibilityDegrees map. If the current possibility is higher, it updates the possibility and previous waypoint of the neighbor, and adds it to the priority queue.
     If the end waypoint is not reached, it returns an empty list.
-    */
+    
+
     public List<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end) {
         // Create a priority queue and add the starting waypoint with a possibility degree of 1
         PriorityQueue<Waypoint> queue = new PriorityQueue<>(new PossibilityComparator());
@@ -112,5 +134,8 @@ class Map {
         // If the end waypoint is not reached, return an empty list
         return new ArrayList<>();
     }
+
+
+    */
 }
 
