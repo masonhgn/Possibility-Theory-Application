@@ -23,4 +23,10 @@ class StreetSegment {
     public double getC2() { return c2; }
     public double getC3() { return c3; }
     public double getC4() { return c4; }
+
+
+    @Override
+    public String toString() {
+        return "[Start = " + this.start.getId() + "] [End = " + this.end.getId() + "]";
+    }
 }

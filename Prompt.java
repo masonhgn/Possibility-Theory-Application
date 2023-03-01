@@ -29,8 +29,8 @@ public class Prompt {
     public void promptMenu() {
         System.out.println(" ____________________________________________");
         System.out.println("|                                            |");   
-        System.out.println("|  [1] Load File                             |");                                  
-        System.out.println("|  [2] Display Map                           |");
+        System.out.println("|  [1] Load Segments File                    |");
+        System.out.println("|  [2] Load Waypoints File                   |");                                  
         System.out.println("|  [3] List All Waypoints                    |");
         System.out.println("|  [4] Find Best Route Between 2 Waypoints   |");
         System.out.println("|  [5] Exit                                  |");
@@ -41,10 +41,12 @@ public class Prompt {
             case 1:
                 System.out.println("Enter file name...");
                 String fileName = scanner.next();
-                parseFileData(fileName);
+                parseSegmentFileData(fileName);
                 break;
             case 2:
-                System.out.println("displaying map...");
+                System.out.println("Enter file name...");
+                fileName = scanner.next();
+                parseWaypointFileData(fileName);
                 break;
             case 3:
                 map.displayWaypoints();
@@ -69,18 +71,18 @@ public class Prompt {
             System.out.println("Invalid waypoint IDs");
             return;
         }
-        return;
-        /*
-        List<StreetSegment> bestRoute = map.findOptimalRoute(start, end);
+        
+        List<StreetSegment> temp = new List<StreetSegment>(0);
+        List<StreetSegment> bestRoute = map.findOptimalRoute(start, end, temp);
         if (bestRoute.isEmpty()) {
             System.out.println("No route found between the given waypoints");
         } else {
             System.out.println("The best route between waypoints " + startId + " and " + endId + " is:");
             for (StreetSegment segment : bestRoute) {
-                System.out.println(segment);
+                System.out.println(segment.toString());
             }
         }
-        */
+        
     }
 
 
@@ -117,8 +119,32 @@ public class Prompt {
     }
 
 
+    //parses waypoints file
+    public void parseWaypointLine(String line) {
+        String[] parts = line.split(" ");
+
+        if (parts.length != 3) {
+            System.out.println("INVALID FILE INPUT: LINE CONTAINS " + parts.length + " elements but 3 are required.");
+            System.out.println(line);
+            System.exit(0);
+        }
+
+        int tempId = Integer.parseInt(parts[0]);
+        double tempX = Integer.parseInt(parts[1]);
+        double tempY = Integer.parseInt(parts[2]);
+
+
+        Waypoint temp = map.findWaypointById(tempId);
+
+        if (temp == null) {
+            temp = new Waypoint(tempId, tempX, tempY);
+            map.addWaypoint(temp);
+        }
+    }
+
+
     // parses every line of a passed in file, adds segments/waypoint to map
-    public void parseFileData(String fileName) {
+    public void parseSegmentFileData(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
 
@@ -131,4 +157,17 @@ public class Prompt {
     }
 
 
+
+    // parses every line of a passed in file, adds segments/waypoint to map
+    public void parseWaypointFileData(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                parseWaypointLine(line); //parses a line into a segment, adds segment and waypoints to map
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

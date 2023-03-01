@@ -14,9 +14,15 @@ public class Main {
         
         Prompt prompt = Prompt.getInstance(m1);
 
+        
         while (true) {
             prompt.promptMenu();
         }
+        
+
+
+
+
 
 
        

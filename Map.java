@@ -3,7 +3,7 @@ import java.util.*;
 class Map {
     private List<Waypoint> waypoints;
     private List<StreetSegment> streetSegments;
-    
+
     public Map() {
         waypoints = new ArrayList<Waypoint>();
         streetSegments = new ArrayList<StreetSegment>();
@@ -16,6 +16,7 @@ class Map {
     public void addStreetSegment(StreetSegment streetSegment) {
         streetSegments.add(streetSegment);
     }
+
 
     public void displayWaypoints() {
         System.out.println("ALL WAYPOINTS:");
@@ -33,6 +34,14 @@ class Map {
         return streetSegments;
     }
 
+    public Waypoint findWaypointByXY(double x, double y) {
+        for (Waypoint waypoint : waypoints) {
+            if (waypoint.getX() == x && waypoint.getY() == y) {
+                return waypoint;
+            }
+        }
+        return null;
+    }
 
     public Waypoint findWaypointById(int id) {
         for (Waypoint waypoint : waypoints) {
@@ -48,6 +57,7 @@ class Map {
 
 
     public double computePossibilityDegree(StreetSegment segment) {
+
         // Initialize possibility degree to 1
         double possibilityDegree = 1;
         // Get the probability values and constraints for the current segment
@@ -67,75 +77,52 @@ class Map {
     }
 
 
-
-
-
-
-
-    /*
-    The algorithm uses a priority queue and a couple of HashMaps to keep track of the possibility degree and the previous waypoint of each waypoint in the optimal route. It starts by adding the starting waypoint to the priority queue with a possibility degree of 1.
-    It then enters a while loop that continues until the priority queue is empty. In each iteration, it takes the waypoint with the highest possibility degree from the queue, and checks if it is the end waypoint. If it is, it uses the previous waypoints map to trace the optimal route from the end waypoint to the starting waypoint and return it.
-    If the current waypoint is not the end waypoint, it loops through each street segment that leaves from it, and for each one of them, it calculates the possibility degree of the neighbor waypoint, and compares it with the one already stored in the possibilityDegrees map. If the current possibility is higher, it updates the possibility and previous waypoint of the neighbor, and adds it to the priority queue.
-    If the end waypoint is not reached, it returns an empty list.
-    
-
-    public List<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end) {
-        // Create a priority queue and add the starting waypoint with a possibility degree of 1
-        PriorityQueue<Waypoint> queue = new PriorityQueue<>(new PossibilityComparator());
-        queue.add(start);
-
-        // Create a HashMap to store the possibility degree of each waypoint
-        HashMap<Waypoint, Double> possibilityDegrees = new HashMap<>();
-        possibilityDegrees.put(start, 1.0);
-
-        // Create a HashMap to store the previous waypoint of each waypoint in the optimal route
-        HashMap<Waypoint, Waypoint> previousWaypoints = new HashMap<>();
-
-        // While the queue is not empty
-        while (!queue.isEmpty()) {
-            // Dequeue the waypoint with the highest possibility degree
-            Waypoint currentWaypoint = queue.poll();
-
-            // If the current waypoint is the end waypoint, we have found the optimal route
-            if (currentWaypoint.equals(end)) {
-                // Use the previous waypoints map to trace the optimal route from end to start
-                List<StreetSegment> optimalRoute = new ArrayList<>();
-                Waypoint current = end;
-                while (current != start) {
-                    Waypoint previous = previousWaypoints.get(current);
-                    for(StreetSegment segment: streetSegments) {
-                        if(segment.getStart().equals(previous) && segment.getEnd().equals(current)) {
-                            optimalRoute.add(segment);
-                        }
-                    }
-                    current = previous;
-                }
-                // Reverse the list to get the optimal route from start to end
-                Collections.reverse(optimalRoute);
-                return optimalRoute;
-            }
-
-            // For each neighbor of the current waypoint
-            for (StreetSegment segment : currentWaypoint.getStreetSegments()) {
-                Waypoint neighbor = segment.getEnd();
-                double possibility = computePossibilityDegree(currentWaypoint, neighbor);
-                double currentPossibility = possibilityDegrees.getOrDefault(neighbor, 0.0);
-                // If the possibility of the current route to the neighbor is higher than the previous possibility
-                if (possibility > currentPossibility) {
-                    // Update the possibility of the neighbor in the possibility map
-                    possibilityDegrees.put(neighbor, possibility);
-                    // Update the previous waypoint of the neighbor in the previous waypoints map
-                    previousWaypoints.put(neighbor, currentWaypoint);
-                    // Enqueue the neighbor with the updated possibility
-                    queue.add(neighbor);
-                }
-            }
+    public List<StreetSegment> minRoute(List<StreetSegment> a, List<StreetSegment> b) {
+        int totalA = 0, totalB = 0;
+        for (int i = 0; i < a.size(); ++i) {
+            totalA += computePossibilityDegree(a.get(i));
         }
-        // If the end waypoint is not reached, return an empty list
-        return new ArrayList<>();
+
+        for (int i = 0; i < a.size(); ++i) {
+            totalB += computePossibilityDegree(b.get(i));
+        }
+        if (totalA > totalB) return a;
+        else return b;
+    }
+
+    public List<StreetSegment> add(List<StreetSegment> a, List<StreetSegment> b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        for (int i = 0; i < b.size(); ++i) a.add(b.get(i));
+        return a;
     }
 
 
-    */
+    public List<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, List<StreetSegment> curPath) {
+        /*  
+            1. if start == end, return {}
+            2. traverse possible segments from given start waypoint, return minimum size segment list from start to end
+        */
+
+        if (start.getId() == end.getId()) {
+            return null;
+        }
+
+        List<StreetSegment> minPath = streetSegments;
+        for (StreetSegment curSegment : streetSegments) {
+            if (curSegment.getStart().getId() == start.getId()) { //if we find a segment leading from our current waypoint
+                
+                //add the segment to our curPath
+                curPath.add(curSegment);
+
+                //find minimum weighted route
+                minPath = minRoute(minPath, add(curPath, findOptimalRoute(curSegment.getEnd(), end, curPath)));
+
+                curPath.remove(curSegment);
+            }
+        }
+        return minPath;
+    }
+
 }
 
