@@ -17,9 +17,6 @@ public class Prompt {
         map = m;
     }
 
-    //destructor
-    protected void finalize() {  scanner.close(); }
-
     //singleton class instance method
     public static Prompt getInstance(Map m) {
         if (single_instance == null) single_instance = new Prompt(m);
@@ -32,8 +29,9 @@ public class Prompt {
         System.out.println("|  [1] Load Segments File                    |");
         System.out.println("|  [2] Load Waypoints File                   |");                                  
         System.out.println("|  [3] List All Waypoints                    |");
-        System.out.println("|  [4] Find Best Route Between 2 Waypoints   |");
-        System.out.println("|  [5] Exit                                  |");
+        System.out.println("|  [4] List All Segments                     |");
+        System.out.println("|  [5] Find Best Route Between 2 Waypoints   |");
+        System.out.println("|  [6] Exit                                  |");
         System.out.println("|____________________________________________|");
         System.out.println("\nPlease select a menu option by number...");
         int option = scanner.nextInt();
@@ -52,9 +50,12 @@ public class Prompt {
                 map.displayWaypoints();
                 break;
             case 4:
-                promptForBestRoute();
+                map.displaySegments();
                 break;
             case 5:
+                promptForBestRoute();
+                break;
+            case 6:
                 System.out.println("Have a nice day!");
                 System.exit(0);
         }
@@ -72,8 +73,7 @@ public class Prompt {
             return;
         }
         
-        List<StreetSegment> temp = new List<StreetSegment>(0);
-        List<StreetSegment> bestRoute = map.findOptimalRoute(start, end, temp);
+        ArrayList<StreetSegment> bestRoute = map.findOptimalRoute(start, end, new ArrayList<StreetSegment>());
         if (bestRoute.isEmpty()) {
             System.out.println("No route found between the given waypoints");
         } else {

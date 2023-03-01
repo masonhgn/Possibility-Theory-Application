@@ -19,7 +19,7 @@ class StreetSegment {
     public Waypoint getEnd() { return end; }
     public double getP1() { return p1; }
     public double getP2() { return p2; }
-    public double getC1() { return c1;}
+    public double getC1() { return c1; }
     public double getC2() { return c2; }
     public double getC3() { return c3; }
     public double getC4() { return c4; }
