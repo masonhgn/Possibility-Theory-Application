@@ -63,7 +63,6 @@ class Map {
 
 
     public double computePossibilityDegree(StreetSegment segment) {
-
         // Initialize possibility degree to 1
         double possibilityDegree = 1;
         // Get the probability values and constraints for the current segment
@@ -94,8 +93,6 @@ class Map {
         for (StreetSegment segment: b) {
             totalB += computePossibilityDegree(segment);
         }
-
-        System.out.println("comparing " + totalA + " to " + totalB);
 
         if (totalA < totalB) return a;
         else return b;
@@ -147,13 +144,15 @@ class Map {
         ArrayList<StreetSegment> possible = possibleSegments(start); //this finds every segment that starts with the current start waypoint
 
         if (possible.size() == 0) { //if there are no segments starting with the current waypoint
-            System.out.println("we're fucked.");
+
         } else { //there is at least one segment, update minimum path
             for (StreetSegment curSegment: possible) {
-                minPath = findOptimalRoute(curSegment.getEnd(), end, addToList(curPath,curSegment), minPath);
-                curPath = new ArrayList<StreetSegment>();
+                ArrayList<StreetSegment> tempPath = new ArrayList<StreetSegment>(curPath); // create a copy of the current path
+                minPath = findOptimalRoute(curSegment.getEnd(), end, addToList(tempPath, curSegment), minPath);
             }
-            //minPath = minRoute(curPath, minPath);
+            if (curPath.size() > 0) {
+                curPath.remove(curPath.size() - 1); // remove the last segment added to curPath before returning
+            }
         }
         return minPath;
     }
