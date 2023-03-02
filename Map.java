@@ -140,7 +140,8 @@ class Map {
     public ArrayList<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, ArrayList<StreetSegment> curPath, ArrayList<StreetSegment> minPath) {
         System.out.println("findOptimalRoute(" + start.toString() + ","+end.toString()+"," + printSegmentList(curPath) + ")");
         if (start.getId() == end.getId()) {
-            return new ArrayList<StreetSegment>();
+            minPath = minRoute(minPath, curPath);
+            return minPath;
         }
 
         ArrayList<StreetSegment> possible = possibleSegments(start); //this finds every segment that starts with the current start waypoint
@@ -149,10 +150,10 @@ class Map {
             System.out.println("we're fucked.");
         } else { //there is at least one segment, update minimum path
             for (StreetSegment curSegment: possible) {
-                minPath = minRoute(minPath, findOptimalRoute(curSegment.getEnd(), end, addToList(curPath,curSegment), minPath));
+                minPath = findOptimalRoute(curSegment.getEnd(), end, addToList(curPath,curSegment), minPath);
                 curPath = new ArrayList<StreetSegment>();
             }
-            minPath = minRoute(curPath, minPath);
+            //minPath = minRoute(curPath, minPath);
         }
         return minPath;
     }
