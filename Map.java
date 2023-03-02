@@ -93,7 +93,7 @@ class Map {
         for (StreetSegment segment: b) {
             totalB += computePossibilityDegree(segment);
         }
-
+        System.out.println("comparing " + totalA + " to " + totalB);
         if (totalA < totalB) return a;
         else return b;
     }
