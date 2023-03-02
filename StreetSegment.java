@@ -25,8 +25,16 @@ class StreetSegment {
     public double getC4() { return c4; }
 
 
+    public static String alphabet(int number) {
+        if (number < 1 || number > 26) {
+            throw new IllegalArgumentException("Number must be between 1 and 26");
+        }
+        char letter = (char) ('a' + number - 1);
+        return Character.toString(letter);
+    }
+
     @Override
     public String toString() {
-        return "[Start = " + this.start.getId() + "] [End = " + this.end.getId() + "]";
+        return "[Start = " + alphabet(this.start.getId()) + "] [End = " + alphabet(this.end.getId()) + "]";
     }
 }

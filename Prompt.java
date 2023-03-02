@@ -73,7 +73,7 @@ public class Prompt {
             return;
         }
         
-        ArrayList<StreetSegment> bestRoute = map.findOptimalRoute(start, end, new ArrayList<StreetSegment>());
+        ArrayList<StreetSegment> bestRoute = map.findOptimalRoute(start, end, new ArrayList<StreetSegment>(), map.streetSegments);
         if (bestRoute.isEmpty()) {
             System.out.println("No route found between the given waypoints");
         } else {

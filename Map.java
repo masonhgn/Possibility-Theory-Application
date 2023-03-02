@@ -2,7 +2,8 @@ import java.util.*;
 
 class Map {
     private ArrayList<Waypoint> waypoints;
-    private ArrayList<StreetSegment> streetSegments;
+    public ArrayList<StreetSegment> streetSegments;
+
 
     public Map() {
         waypoints = new ArrayList<Waypoint>();
@@ -28,9 +29,11 @@ class Map {
 
     public void displaySegments() {
         for (StreetSegment s: streetSegments) {
-            System.out.println(s.toString() + " (P: " + computePossibilityDegree(s));
+            System.out.println(s.toString() + " (P: " + computePossibilityDegree(s) + ")");
         }
     }
+
+
     
     public ArrayList<Waypoint> getWaypoints() {
         return waypoints;
@@ -59,9 +62,6 @@ class Map {
     }
 
 
-
-
-
     public double computePossibilityDegree(StreetSegment segment) {
 
         // Initialize possibility degree to 1
@@ -84,79 +84,79 @@ class Map {
 
 
     public ArrayList<StreetSegment> minRoute(ArrayList<StreetSegment> a, ArrayList<StreetSegment> b) {
-        int totalA = 0, totalB = 0;
-        for (int i = 0; i < a.size(); ++i) {
-            totalA += computePossibilityDegree(a.get(i));
+        if (a.size() == 0) return b;
+        if (b.size() == 0) return a;
+        double totalA = 0, totalB = 0;
+        for (StreetSegment segment : a) {
+            totalA += computePossibilityDegree(segment);
         }
 
-        for (int i = 0; i < a.size(); ++i) {
-            totalB += computePossibilityDegree(b.get(i));
+        for (StreetSegment segment: b) {
+            totalB += computePossibilityDegree(segment);
         }
-        if (totalA > totalB) return a;
+
+        System.out.println("comparing " + totalA + " to " + totalB);
+
+        if (totalA < totalB) return a;
         else return b;
     }
 
-    public ArrayList<StreetSegment> add(ArrayList<StreetSegment> a, ArrayList<StreetSegment> b) {
-        if (a == null) return b;
-        if (b == null) return a;
+    public ArrayList<StreetSegment> addLists(ArrayList<StreetSegment> a, ArrayList<StreetSegment> b) {
+        if (a.size() == 0) return b;
+        if (b.size() == 0) return a;
         for (int i = 0; i < b.size(); ++i) a.add(b.get(i));
         return a;
     }
 
-
-public ArrayList<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, ArrayList<StreetSegment> curPath) {
-    /*  
-        1. if start == end, return {}
-        2. traverse possible segments from given start waypoint, return minimum size segment list from start to end
-    */
-
-    if (start.getId() == end.getId()) {
-        return new ArrayList<StreetSegment>();
+    public ArrayList<StreetSegment> addToList(ArrayList<StreetSegment> a, StreetSegment b) {
+        a.add(b);
+        return a;
     }
 
-    ArrayList<StreetSegment> minPath = streetSegments;
-    for (StreetSegment curSegment : streetSegments) {
-        if (curSegment.getStart().getId() == start.getId()) { //if we find a segment leading from our current waypoint
-            
-            //create a new path for the recursive call
-            ArrayList<StreetSegment> newPath = new ArrayList<StreetSegment>(curPath);
-            //add the segment to our new path
-            newPath.add(curSegment);
-
-            //find minimum weighted route
-            minPath = minRoute(minPath, add(newPath, findOptimalRoute(curSegment.getEnd(), end, newPath)));
-        }
-    }
-    return minPath;
-}
-
-
-/*    public ArrayList<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, ArrayList<StreetSegment> curPath) {
-        /*  
-            1. if start == end, return {}
-            2. traverse possible segments from given start waypoint, return minimum size segment list from start to end
-        
-
-        if (start.getId() == end.getId()) {
-            return null;
-        }
-
-        ArrayList<StreetSegment> minPath = streetSegments;
-        for (StreetSegment curSegment : streetSegments) {
-            if (curSegment.getStart().getId() == start.getId()) { //if we find a segment leading from our current waypoint
-                
-                //add the segment to our curPath
-                curPath.add(curSegment);
-
-                //find minimum weighted route
-                minPath = minRoute(minPath, add(curPath, findOptimalRoute(curSegment.getEnd(), end, curPath)));
-
-                curPath.remove(curSegment);
+    public ArrayList<StreetSegment> possibleSegments(Waypoint start) {
+        ArrayList<StreetSegment> temp = new ArrayList<StreetSegment>();
+        for (StreetSegment curSegment : streetSegments) { //traverse all segments, find all that start with waypoint START.
+            if (curSegment.getStart().getId() == start.getId()) { //if we find a segment starting with START:
+                temp.add(curSegment);
             }
+        }
+        return temp;
+    }
+
+
+    public String printSegmentList(ArrayList<StreetSegment> list) {
+        String result = "[";
+        for (int i = 0; i < list.size(); ++i) {
+            result += StreetSegment.alphabet(list.get(i).getStart().getId());
+            result += "->";
+            result += StreetSegment.alphabet(list.get(i).getEnd().getId());
+            result += ",";
+        }
+        result += "]";
+        return result;
+    }
+
+
+    public ArrayList<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, ArrayList<StreetSegment> curPath, ArrayList<StreetSegment> minPath) {
+        System.out.println("findOptimalRoute(" + start.toString() + ","+end.toString()+"," + printSegmentList(curPath) + ")");
+        if (start.getId() == end.getId()) {
+            return new ArrayList<StreetSegment>();
+        }
+
+        ArrayList<StreetSegment> possible = possibleSegments(start); //this finds every segment that starts with the current start waypoint
+
+        if (possible.size() == 0) { //if there are no segments starting with the current waypoint
+            System.out.println("we're fucked.");
+        } else { //there is at least one segment, update minimum path
+            for (StreetSegment curSegment: possible) {
+                minPath = minRoute(minPath, findOptimalRoute(curSegment.getEnd(), end, addToList(curPath,curSegment), minPath));
+                curPath = new ArrayList<StreetSegment>();
+            }
+            minPath = minRoute(curPath, minPath);
         }
         return minPath;
     }
 
 }
-*/
+
 
