@@ -6,7 +6,7 @@ Implentation of structures of possibility theory, done in Java.
 ## Installation instructions
 1. Clone repo into directory of choice.
 2. Compile using the command ```javac Main.java```
-3. Run using `java Main`
+3. Run using the command `java Main`
 
 ## Instructions
 1. First you need a segments file. A standard segments file includes any number of lines with each line consisting of the integers:
