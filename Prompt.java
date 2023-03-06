@@ -27,11 +27,9 @@ public class Prompt {
         System.out.println(" ____________________________________________");
         System.out.println("|                                            |");   
         System.out.println("|  [1] Load Segments File                    |");
-        System.out.println("|  [2] Load Waypoints File                   |");                                  
-        System.out.println("|  [3] List All Waypoints                    |");
-        System.out.println("|  [4] List All Segments                     |");
-        System.out.println("|  [5] Find Best Route Between 2 Waypoints   |");
-        System.out.println("|  [6] Exit                                  |");
+        System.out.println("|  [2] List All Segments                     |");
+        System.out.println("|  [3] Find Best Route Between 2 Waypoints   |");
+        System.out.println("|  [4] Exit                                  |");
         System.out.println("|____________________________________________|");
         System.out.println("\nPlease select a menu option by number...");
         int option = scanner.nextInt();
@@ -42,20 +40,12 @@ public class Prompt {
                 parseSegmentFileData(fileName);
                 break;
             case 2:
-                System.out.println("Enter file name...");
-                fileName = scanner.next();
-                parseWaypointFileData(fileName);
-                break;
-            case 3:
-                map.displayWaypoints();
-                break;
-            case 4:
                 map.displaySegments();
                 break;
-            case 5:
+            case 3:
                 promptForBestRoute();
                 break;
-            case 6:
+            case 4:
                 System.out.println("Have a nice day!");
                 System.exit(0);
         }

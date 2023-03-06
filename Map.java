@@ -93,7 +93,7 @@ class Map {
         for (StreetSegment segment: b) {
             totalB += computePossibilityDegree(segment);
         }
-        System.out.println("comparing " + totalA + " to " + totalB);
+        //System.out.println("comparing " + totalA + " to " + totalB);
         if (totalA < totalB) return a;
         else return b;
     }
@@ -135,7 +135,7 @@ class Map {
 
 
     public ArrayList<StreetSegment> findOptimalRoute(Waypoint start, Waypoint end, ArrayList<StreetSegment> curPath, ArrayList<StreetSegment> minPath) {
-        System.out.println("findOptimalRoute(" + start.toString() + ","+end.toString()+"," + printSegmentList(curPath) + ")");
+        //System.out.println("findOptimalRoute(" + start.toString() + ","+end.toString()+"," + printSegmentList(curPath) + ")");
         if (start.getId() == end.getId()) {
             minPath = minRoute(minPath, curPath);
             return minPath;
